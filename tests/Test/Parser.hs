@@ -22,12 +22,12 @@ mergeRequest :: TestTree
 mergeRequest = testCase "merge request" $
     decode mergeRequestJSON @?=
         Just (MergeRequest
-            { Bake.targetBranch  = "master"
-            , Bake.targetUrl     = "ssh://git@example.com/awesome_target/awesome_project.git"
-            , Bake.sourceBranch  = "ms-viewport"
-            , Bake.sourceUrl     = "ssh://git@example.com/awesome_source/awesome_project.git"
-            , Bake.commitId      = "da1560886d4f094c3e6c9ef40349f7d38b5d27d7"
-            , Bake.commitMessage = "fixed readme"
-            , Bake.authorName    = "GitLab dev user"
-            , Bake.authorEmail   = "gitlabdev@dv6700.(none)"
+            { targetBranch  = "master"
+            , targetUrl     = "ssh://git@example.com/awesome_target/awesome_project.git"
+            , sourceBranch  = "ms-viewport"
+            , sourceUrl     = "ssh://git@example.com/awesome_source/awesome_project.git"
+            , commitId      = "da1560886d4f094c3e6c9ef40349f7d38b5d27d7"
+            , commitMessage = "fixed readme"
+            , authorName    = "GitLab dev user"
+            , authorEmail   = "gitlabdev@dv6700.(none)"
             })

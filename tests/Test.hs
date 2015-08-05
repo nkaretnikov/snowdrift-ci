@@ -1,6 +1,6 @@
 module Main where
 
-import Test.Tasty
+import           Test.Tasty
 import qualified Test.Parser as Parser
 
 main :: IO ()

@@ -12,7 +12,7 @@ import Bake
 
 tests :: TestTree
 tests = testGroup "Parser tests"
-  [ mergeRequest  ]
+  [ mergeRequest ]
 
 mergeRequestJSON :: ByteString
 mergeRequestJSON =

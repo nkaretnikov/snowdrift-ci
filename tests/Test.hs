@@ -8,4 +8,4 @@ main = defaultMain tests
 
 tests :: TestTree
 tests = testGroup "Tests"
-  [ Parser.tests ]
+    [ Parser.tests ]

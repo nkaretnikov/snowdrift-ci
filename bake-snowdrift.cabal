@@ -1,0 +1,44 @@
+name:                bake-snowdrift
+version:             0.1.0.0
+license:             BSD3
+license-file:        LICENSE
+author:              Nikita Karetnikov
+maintainer:          nikita@karetnikov.org
+category:            Web
+build-type:          Simple
+cabal-version:       >=1.10
+data-files:          merge_request.json
+data-dir:            data
+
+
+library
+  build-depends:       base >=4.8 && <4.9
+                     , aeson
+                     , text
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+  ghc-options:         -Wall -Werror -O2
+  exposed-modules:     Bake
+                     , Bake.Type
+                     , Bake.Parser
+
+executable bake-snowdrift
+  main-is:             Main.hs
+  build-depends:       base >=4.8 && <4.9
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+  ghc-options:         -Wall -Werror -O2
+
+test-suite test
+  default-language:    Haskell2010
+  type:                exitcode-stdio-1.0
+  main-is:             Test.hs
+  hs-source-dirs:      tests
+  ghc-options:         -Wall -Werror -O2
+  other-modules:       Test.Parser
+  build-depends:       base
+                     , bake-snowdrift
+                     , aeson
+                     , bytestring
+                     , tasty
+                     , tasty-hunit

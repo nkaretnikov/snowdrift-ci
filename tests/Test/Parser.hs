@@ -3,8 +3,7 @@
 module Test.Parser where
 
 import Data.Aeson
-import Data.ByteString.Lazy as ByteString
-import System.IO.Unsafe
+import Data.ByteString.Lazy.Char8 as C
 import Test.Tasty
 import Test.Tasty.HUnit
 
@@ -16,15 +15,13 @@ tests = testGroup "Parser tests"
     , mergeRequestClosed
     ]
 
-unsafeReadFile :: String -> ByteString
-unsafeReadFile = unsafePerformIO . ByteString.readFile
-
 decodeMergeRequest :: ByteString -> Maybe MergeRequest
 decodeMergeRequest = decode
 
 mergeRequestOpened :: TestTree
-mergeRequestOpened = testCase "merge request opened" $
-    decodeMergeRequest (unsafeReadFile "data/merge_request_opened.json") @?=
+mergeRequestOpened = testCase "merge request opened" $ do
+    str <- C.readFile "data/merge_request_opened.json"
+    decodeMergeRequest str @?=
         Just (MergeRequest
             { targetBranch  = "master"
             , targetUrl     = "ssh://git@example.com/awesome_target/awesome_project.git"
@@ -37,6 +34,6 @@ mergeRequestOpened = testCase "merge request opened" $
             })
 
 mergeRequestClosed :: TestTree
-mergeRequestClosed = testCase "merge request closed" $
-    decodeMergeRequest (unsafeReadFile "data/merge_request_closed.json") @?=
-        Nothing
+mergeRequestClosed = testCase "merge request closed" $ do
+    str <- C.readFile "data/merge_request_closed.json"
+    decodeMergeRequest str @?= Nothing

@@ -22,7 +22,7 @@ main = do
         _      -> usage
 
 handle :: Port -> IO ()
-handle port = scotty port $ do
-    get "" $ do
+handle port = scottyOpts (Options 0 $ setPort port defaultSettings) $ do
+    post "" $ do
         bs <- body
         liftIO $ print (decode bs :: Maybe MergeRequest)

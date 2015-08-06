@@ -42,9 +42,12 @@ test-suite test
   hs-source-dirs:      tests
   ghc-options:         -Wall -Werror -O2
   other-modules:       Test.Parser
+                     , Test.Server
   build-depends:       base
                      , bake-gitlab
                      , aeson
                      , bytestring
+                     , HTTP
+                     , process
                      , tasty
                      , tasty-hunit

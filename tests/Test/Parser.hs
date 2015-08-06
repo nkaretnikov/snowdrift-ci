@@ -12,15 +12,19 @@ import Bake
 
 tests :: TestTree
 tests = testGroup "Parser tests"
-    [ mergeRequest ]
+    [ mergeRequestOpened
+    , mergeRequestClosed
+    ]
 
-mergeRequestJSON :: ByteString
-mergeRequestJSON =
-    unsafePerformIO $ ByteString.readFile "data/merge_request.json"
+unsafeReadFile :: String -> ByteString
+unsafeReadFile = unsafePerformIO . ByteString.readFile
 
-mergeRequest :: TestTree
-mergeRequest = testCase "merge request" $
-    decode mergeRequestJSON @?=
+decodeMergeRequest :: ByteString -> Maybe MergeRequest
+decodeMergeRequest = decode
+
+mergeRequestOpened :: TestTree
+mergeRequestOpened = testCase "merge request opened" $
+    decodeMergeRequest (unsafeReadFile "data/merge_request_opened.json") @?=
         Just (MergeRequest
             { targetBranch  = "master"
             , targetUrl     = "ssh://git@example.com/awesome_target/awesome_project.git"
@@ -31,3 +35,8 @@ mergeRequest = testCase "merge request" $
             , authorName    = "GitLab dev user"
             , authorEmail   = "gitlabdev@dv6700.(none)"
             })
+
+mergeRequestClosed :: TestTree
+mergeRequestClosed = testCase "merge request closed" $
+    decodeMergeRequest (unsafeReadFile "data/merge_request_closed.json") @?=
+        Nothing

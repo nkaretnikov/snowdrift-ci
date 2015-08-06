@@ -1,4 +1,4 @@
-name:                bake-snowdrift
+name:                bake-gitlab
 version:             0.1.0.0
 license:             BSD3
 license-file:        LICENSE
@@ -23,7 +23,7 @@ library
                      , Bake.Type
                      , Bake.Parser
 
-executable bake-snowdrift
+executable bake-gitlab
   main-is:             Main.hs
   build-depends:       base >=4.8 && <4.9
                      , aeson
@@ -43,7 +43,7 @@ test-suite test
   ghc-options:         -Wall -Werror -O2
   other-modules:       Test.Parser
   build-depends:       base
-                     , bake-snowdrift
+                     , bake-gitlab
                      , aeson
                      , bytestring
                      , tasty

@@ -10,7 +10,7 @@ import Network.Wai.Handler.Warp
 import System.Environment
 import Web.Scotty
 
-import Bake
+import Snowdrift.CI
 
 main :: IO ()
 main = do

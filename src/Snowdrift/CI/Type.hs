@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Bake.Type where
+module Snowdrift.CI.Type where
 
 import Data.Text
 

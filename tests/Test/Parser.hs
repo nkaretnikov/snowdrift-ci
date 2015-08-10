@@ -7,7 +7,7 @@ import Data.ByteString.Lazy.Char8 as C
 import Test.Tasty
 import Test.Tasty.HUnit
 
-import Bake
+import Snowdrift.CI
 
 tests :: TestTree
 tests = testGroup "Parser tests"

@@ -1,4 +1,4 @@
-name:                bake-gitlab
+name:                snowdrift-ci
 version:             0.1.0.0
 license:             BSD3
 license-file:        LICENSE
@@ -19,11 +19,11 @@ library
   hs-source-dirs:      src
   default-language:    Haskell2010
   ghc-options:         -Wall -Werror -O2
-  exposed-modules:     Bake
-                     , Bake.Type
-                     , Bake.Parser
+  exposed-modules:     Snowdrift.CI
+                     , Snowdrift.CI.Type
+                     , Snowdrift.CI.Parser
 
-executable bake-gitlab
+executable snowdrift-ci
   main-is:             Main.hs
   build-depends:       base >=4.8 && <4.9
                      , aeson
@@ -44,7 +44,7 @@ test-suite test
   other-modules:       Test.Parser
                      , Test.Server
   build-depends:       base
-                     , bake-gitlab
+                     , snowdrift-ci
                      , aeson
                      , bytestring
                      , HTTP

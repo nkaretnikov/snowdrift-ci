@@ -1,13 +1,13 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
-module Bake.Parser where
+module Snowdrift.CI.Parser where
 
 import Data.Aeson
 import Control.Monad
 
-import           Bake.Type (MergeRequest (MergeRequest))
-import qualified Bake.Type as Bake
+import           Snowdrift.CI.Type (MergeRequest (MergeRequest))
+import qualified Snowdrift.CI.Type as CI
 
 instance FromJSON MergeRequest where
     parseJSON (Object o) = do
@@ -27,14 +27,14 @@ instance FromJSON MergeRequest where
         authorEmail   <- author .: "email"
         if (state `elem` ["opened", "reopened" :: Value])
         then return $! MergeRequest
-                 { Bake.targetBranch  = targetBranch
-                 , Bake.targetUrl     = targetUrl
-                 , Bake.sourceBranch  = sourceBranch
-                 , Bake.sourceUrl     = sourceUrl
-                 , Bake.commitId      = commitId
-                 , Bake.commitMessage = commitMessage
-                 , Bake.authorName    = authorName
-                 , Bake.authorEmail   = authorEmail
+                 { CI.targetBranch  = targetBranch
+                 , CI.targetUrl     = targetUrl
+                 , CI.sourceBranch  = sourceBranch
+                 , CI.sourceUrl     = sourceUrl
+                 , CI.commitId      = commitId
+                 , CI.commitMessage = commitMessage
+                 , CI.authorName    = authorName
+                 , CI.authorEmail   = authorEmail
                  }
         else mzero
     parseJSON _ = mzero

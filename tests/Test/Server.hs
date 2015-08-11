@@ -25,7 +25,7 @@ mergeRequestOpened :: TestTree
 mergeRequestOpened = testCase "merge request opened" $ do
     let port  = 8086 :: Int
         file  = "data/merge_request_opened.json"
-        stack = proc "stack" ["exec", "bake-gitlab", show port]
+        stack = proc "stack" ["exec", "snowdrift-ci", show port]
     (_, Just oh, _, ph) <- createProcess $ stack
                                { create_group = True
                                , std_out = CreatePipe

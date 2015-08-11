@@ -1,0 +1,53 @@
+{
+  "object_kind": "",
+  "user": {
+    "name": "",
+    "username": "",
+    "avatar_url": ""
+  },
+  "object_attributes": {
+    "id": 0,
+    "target_branch": "master",
+    "source_branch": "readme",
+    "source_project_id": 0,
+    "author_id": 0,
+    "assignee_id": 0,
+    "title": "",
+    "created_at": "",
+    "updated_at": "",
+    "st_commits": null,
+    "st_diffs": null,
+    "milestone_id": null,
+    "state": "opened",
+    "merge_status": "",
+    "target_project_id": 0,
+    "iid": 0,
+    "description": "",
+    "source": {
+      "name": "",
+      "ssh_url": "ssh://git@github.com:nkaretnikov/snowdrift-ci-test.git",
+      "http_url": "",
+      "visibility_level": 0,
+      "namespace": ""
+    },
+    "target": {
+      "name": "",
+      "ssh_url": "ssh://git@github.com:nkaretnikov/snowdrift-ci-test.git",
+      "http_url": "",
+      "visibility_level": 0,
+      "namespace": ""
+    },
+    "last_commit": {
+      "id": "",
+      "message": "",
+      "timestamp": "",
+      "url": "",
+      "author": {
+        "name": "",
+        "email": ""
+      }
+    },
+    "url": "",
+    "action": ""
+  }
+}

@@ -3,11 +3,23 @@
 
 module Snowdrift.CI.Parser where
 
-import Data.Aeson
-import Control.Monad
+import           Data.Aeson
+import           Data.Maybe
+import           Data.Text (Text)
+import qualified Data.Text as T
+import           Control.Monad
 
 import           Snowdrift.CI.Type (MergeRequest (MergeRequest))
 import qualified Snowdrift.CI.Type as CI
+
+stripPrefix :: Text -> Text -> Text
+stripPrefix p t =
+    if p `T.isPrefixOf` t
+    then fromJust $ T.stripPrefix p t
+    else t
+
+stripSSH :: Text -> Text
+stripSSH = stripPrefix "ssh://"
 
 instance FromJSON MergeRequest where
     parseJSON (Object o) = do
@@ -27,14 +39,14 @@ instance FromJSON MergeRequest where
         authorEmail   <- author .: "email"
         if (state `elem` ["opened", "reopened" :: Value])
         then return $! MergeRequest
-                 { CI.targetBranch  = targetBranch
-                 , CI.targetUrl     = targetUrl
-                 , CI.sourceBranch  = sourceBranch
-                 , CI.sourceUrl     = sourceUrl
-                 , CI.commitId      = commitId
-                 , CI.commitMessage = commitMessage
-                 , CI.authorName    = authorName
-                 , CI.authorEmail   = authorEmail
+                 { CI.targetBranch  = CI.Branch targetBranch
+                 , CI.targetUrl     = CI.Url $ stripSSH targetUrl
+                 , CI.sourceBranch  = CI.Branch sourceBranch
+                 , CI.sourceUrl     = CI.Url $ stripSSH sourceUrl
+                 , CI.commitId      = CI.CommitId commitId
+                 , CI.commitMessage = CI.CommitMessage commitMessage
+                 , CI.authorName    = CI.AuthorName authorName
+                 , CI.authorEmail   = CI.AuthorEmail authorEmail
                  }
         else mzero
     parseJSON _ = mzero

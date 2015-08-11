@@ -3,14 +3,15 @@
 
 module Main where
 
-import Control.Monad.IO.Class
-import Data.Aeson
-import Data.Char
-import Network.Wai.Handler.Warp
-import System.Environment
-import Web.Scotty
+import           Control.Monad.IO.Class
+import           Data.Aeson
+import           Data.Char
+import qualified Data.Foldable as F
+import           Network.Wai.Handler.Warp
+import           System.Environment
+import           Web.Scotty
 
-import Snowdrift.CI
+import           Snowdrift.CI
 
 main :: IO ()
 main = do
@@ -25,4 +26,5 @@ handle :: Port -> IO ()
 handle port = scottyOpts (Options 0 $ setPort port defaultSettings) $ do
     post "" $ do
         bs <- body
-        liftIO $ print (decode bs :: Maybe MergeRequest)
+        F.forM_ (decode bs :: Maybe MergeRequest) $ \mr ->
+            liftIO $ printStatus =<< testMergeRequest mr

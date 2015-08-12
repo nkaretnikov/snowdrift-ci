@@ -2,11 +2,15 @@
 
 module Test.Server where
 
-import Data.Monoid
+import Prelude hiding (readFile)
+
 import Control.Concurrent
+import Control.Lens
 import Control.Monad
-import Network.HTTP hiding (port)
-import System.IO
+import Data.ByteString.Char8 (readFile)
+import Data.Monoid
+import Network.Wreq
+import System.IO hiding (readFile)
 import System.Process
 import Test.Tasty
 import Test.Tasty.HUnit
@@ -28,11 +32,10 @@ mergeRequestOpened = testCase "merge request opened" $ do
                                }
     str <- readFile file
     threadDelay 2000000
-    void $ simpleHTTP $
-        postRequestWithBody
-            ("http://localhost:" <> show port)
-            "application/json; charset=utf-8"
-            str
+    let opts = defaults
+             & header "Content-Type"
+            .~ ["application/json; charset=utf-8"]
+    void $ postWith opts ("http://localhost:" <> show port) str
     output <- hGetContents oh
     interruptProcessGroupOf ph
     output @?= unlines

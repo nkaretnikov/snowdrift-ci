@@ -59,7 +59,8 @@ test-suite test
                      , snowdrift-ci
                      , aeson
                      , bytestring
-                     , HTTP
+                     , lens
                      , process
                      , tasty
                      , tasty-hunit
+                     , wreq

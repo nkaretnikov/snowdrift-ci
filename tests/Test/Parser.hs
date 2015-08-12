@@ -23,14 +23,16 @@ mergeRequestOpened = testCase "merge request opened" $ do
     str <- C.readFile "data/merge_request_opened.json"
     decodeMergeRequest str @?=
         Just (MergeRequest
-            { targetBranch  = Branch "master"
-            , targetUrl     = Url "git@example.com/awesome_target/awesome_project.git"
-            , sourceBranch  = Branch "ms-viewport"
-            , sourceUrl     = Url "git@example.com/awesome_source/awesome_project.git"
-            , commitId      = CommitId "da1560886d4f094c3e6c9ef40349f7d38b5d27d7"
-            , commitMessage = CommitMessage "fixed readme"
-            , authorName    = AuthorName "GitLab dev user"
-            , authorEmail   = AuthorEmail "gitlabdev@dv6700.(none)"
+            { mergeRequestId = MergeRequestId 99
+            , targetId       = TargetId 14
+            , targetBranch   = Branch "master"
+            , targetUrl      = Url "git@example.com/awesome_target/awesome_project.git"
+            , sourceBranch   = Branch "ms-viewport"
+            , sourceUrl      = Url "git@example.com/awesome_source/awesome_project.git"
+            , commitId       = CommitId "da1560886d4f094c3e6c9ef40349f7d38b5d27d7"
+            , commitMessage  = CommitMessage "fixed readme"
+            , authorName     = AuthorName "GitLab dev user"
+            , authorEmail    = AuthorEmail "gitlabdev@dv6700.(none)"
             })
 
 mergeRequestClosed :: TestTree

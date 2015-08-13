@@ -1,19 +1,25 @@
+{-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Test.Server where
 
-import Prelude hiding (readFile)
-
-import Control.Concurrent
-import Control.Lens
-import Control.Monad
-import Data.ByteString.Char8 (readFile)
-import Data.Monoid
-import Network.Wreq
-import System.IO hiding (readFile)
-import System.Process
-import Test.Tasty
-import Test.Tasty.HUnit
+import           Control.Concurrent
+import           Control.Lens
+import           Control.Monad
+import           Control.Monad.IO.Class
+import qualified Data.ByteString.Char8 as C
+import           Data.Monoid
+import           Data.Text.Lazy (Text)
+import qualified Data.Text.Lazy as T
+import           Network.Wai.Handler.Warp
+import           Network.Wreq
+import qualified Network.Wreq as W
+import           System.IO
+import           System.Process
+import           Test.Tasty
+import           Test.Tasty.HUnit
+import           Web.Scotty hiding (body, file)
+import qualified Web.Scotty as S
 
 tests :: TestTree
 tests = testGroup "Server tests"
@@ -21,21 +27,41 @@ tests = testGroup "Server tests"
     -- , mergeRequestClosed
     ]
 
+withHeader :: Text -> Text -> ActionM ()
+withHeader name value =
+    S.header name >>= \case
+        Nothing -> error $ T.unpack $ "no " <> name <> " header"
+        Just h  -> when (h /= value) $
+                       error $ T.unpack $ "invalid " <> name <> ": " <> h
+
 mergeRequestOpened :: TestTree
 mergeRequestOpened = testCase "merge request opened" $ do
     let port  = 8086 :: Int
+        port' = succ port
         file  = "data/snowdrift_ci_test.json"
-        stack = proc "stack" ["exec", "snowdrift-ci", show port]
+        stack = proc "stack" [ "exec", "snowdrift-ci"
+                             , show port
+                             , "http://localhost:" <> show port'
+                             , "secret" ]
     (_, Just oh, _, ph) <- createProcess $ stack
                                { create_group = True
                                , std_out = CreatePipe
                                }
-    str <- readFile file
+
+    void $ forkIO $ scottyOpts (Options 0 $ setPort port' defaultSettings) $
+        S.post "" $ do
+            withHeader "Content-Type" "application/json; charset=utf-8"
+            withHeader "PRIVATE-TOKEN" "secret"
+            body <- S.body
+            liftIO $ body @?= "{\"note\":\"test succeeded\"}"
+
+    str <- C.readFile file
     threadDelay 2000000
     let opts = defaults
-             & header "Content-Type"
+             & W.header "Content-Type"
             .~ ["application/json; charset=utf-8"]
     void $ postWith opts ("http://localhost:" <> show port) str
+
     output <- hGetContents oh
     interruptProcessGroupOf ph
     output @?= unlines
@@ -78,4 +104,5 @@ mergeRequestOpened = testCase "merge request opened" $ do
         , "stderr"
         , ""
         , "test succeeded"
+        , "200"
         ]

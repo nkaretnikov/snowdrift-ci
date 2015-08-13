@@ -33,6 +33,9 @@ newtype FilePath = FilePath { unFilePath :: Text } deriving (Eq, Show)
 newtype Stdout = Stdout { unStdout :: Text } deriving (Eq, Show)
 newtype Stderr = Stderr { unStderr :: Text } deriving (Eq, Show)
 
+newtype Port  = Port  { unPort  :: Int  } deriving (Eq, Show)
+newtype Token = Token { unToken :: Text } deriving (Eq, Show)
+
 data Status = MergeFailed
             | TestFailed
             | TestSucceeded

@@ -2,19 +2,21 @@
 
 module Snowdrift.CI.Printer where
 
-import Prelude hiding (putStrLn)
+import           Data.Text (Text)
+import qualified Data.Text.IO as T
 
-import Data.Text.IO
+import           Snowdrift.CI.Type
 
-import Snowdrift.CI.Type
+pprintStatus :: Status -> Text
+pprintStatus MergeFailed   = "merge failed"
+pprintStatus TestFailed    = "test failed"
+pprintStatus TestSucceeded = "test succeeded"
 
 printStatus :: Status -> IO ()
-printStatus MergeFailed   = putStrLn "merge failed"
-printStatus TestFailed    = putStrLn "test failed"
-printStatus TestSucceeded = putStrLn "test succeeded"
+printStatus = T.putStrLn . pprintStatus
 
 printStdout :: Stdout -> IO ()
-printStdout = putStrLn . unStdout
+printStdout = T.putStrLn . unStdout
 
 printStderr :: Stderr -> IO ()
-printStderr = putStrLn . unStderr
+printStderr = T.putStrLn . unStderr

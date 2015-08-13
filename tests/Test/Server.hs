@@ -11,6 +11,7 @@ import qualified Data.ByteString.Char8 as C
 import           Data.Monoid
 import           Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as T
+import           Data.Text.Encoding (encodeUtf8)
 import           Network.Wai.Handler.Warp
 import           Network.Wreq
 import qualified Network.Wreq as W
@@ -39,19 +40,21 @@ mergeRequestOpened = testCase "merge request opened" $ do
     let port  = 8086 :: Int
         port' = succ port
         file  = "data/snowdrift_ci_test.json"
+        token = "secret"
         stack = proc "stack" [ "exec", "snowdrift-ci"
                              , show port
                              , "http://localhost:" <> show port'
-                             , "secret" ]
+                             , token ]
     (_, Just oh, _, ph) <- createProcess $ stack
                                { create_group = True
                                , std_out = CreatePipe
                                }
 
+    let contentType = "application/json; charset=utf-8"
     void $ forkIO $ scottyOpts (Options 0 $ setPort port' defaultSettings) $
         S.post "" $ do
-            withHeader "Content-Type" "application/json; charset=utf-8"
-            withHeader "PRIVATE-TOKEN" "secret"
+            withHeader "Content-Type" contentType
+            withHeader "PRIVATE-TOKEN" $ T.pack token
             body <- S.body
             liftIO $ body @?= "{\"note\":\"test succeeded\"}"
 
@@ -59,7 +62,7 @@ mergeRequestOpened = testCase "merge request opened" $ do
     threadDelay 2000000
     let opts = defaults
              & W.header "Content-Type"
-            .~ ["application/json; charset=utf-8"]
+            .~ [encodeUtf8 $ T.toStrict contentType]
     void $ postWith opts ("http://localhost:" <> show port) str
 
     output <- hGetContents oh

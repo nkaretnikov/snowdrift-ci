@@ -13,7 +13,6 @@ import           Prelude hiding (unwords, putStrLn)
 
 import           Data.Monoid
 import           Data.Text
-import           Data.Text.IO
 import           System.Exit
 import qualified System.Process as P
 

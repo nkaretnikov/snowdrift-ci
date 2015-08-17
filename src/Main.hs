@@ -1,3 +1,4 @@
+{-# LANGUAGE RecordWildCards   #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE LambdaCase        #-}
 
@@ -49,8 +50,8 @@ handle port url token =
             bs <- body
             F.forM_ (decode bs :: Maybe MergeRequest) $ \mr ->
                 liftIO $ do
-                    status <- testMergeRequest mr
-                    printStatus status
+                    report@Report {..} <- testMergeRequest mr
+                    printStatus reportStatus
                     -- http://doc.gitlab.com/ce/api/
                     -- http://doc.gitlab.com/ce/api/merge_requests.html#post-comment-to-mr
                     let opts = defaults
@@ -58,5 +59,5 @@ handle port url token =
                             .~ ["application/json; charset=utf-8"]
                              & header "PRIVATE-TOKEN"
                             .~ [encodeUtf8 $ unToken token]
-                    res <- postWith opts url $ encode status
+                    res <- postWith opts url $ encode report
                     print $ res ^. responseStatus . statusCode

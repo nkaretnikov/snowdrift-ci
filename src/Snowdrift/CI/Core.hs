@@ -21,25 +21,29 @@ x </> y = FilePath $ (unFilePath x) <> "/" <> (unFilePath y)
 cd :: FilePath -> IO ()
 cd = setCurrentDirectory . T.unpack . unFilePath
 
-testMergeRequest :: MergeRequest -> IO Status
+testMergeRequest :: MergeRequest -> IO Report
 testMergeRequest MergeRequest {..} = do
     initDir <- FilePath . T.pack <$> getCurrentDirectory
     withSystemTempDirectory "snowdrift-ci" $ \tmp -> do
         let tmpDir    = FilePath $ T.pack tmp
             targetDir = FilePath "target"
         cd tmpDir
-        verboseGit_ $ clone targetUrl targetDir
+        let mergeOutput    (_,y,z) = unStdout y <> unStderr z
+            mergeOutput' t@(x,_,_) = (x, mergeOutput t)
+        cloneLog <- mergeOutput <$> verboseGit (clone targetUrl targetDir)
         cd $ tmpDir </> targetDir
-        verboseGit_ $ fetch sourceUrl sourceBranch sourceBranch
-        verboseGit_ $ checkout targetBranch
-        (mexit, _, _) <- verboseGit $ merge sourceBranch
+        fetchLog <- mergeOutput <$> verboseGit (fetch sourceUrl sourceBranch sourceBranch)
+        checkoutLog <- mergeOutput <$> verboseGit (checkout targetBranch)
+        (mexit, mergeLog) <- mergeOutput' <$> verboseGit (merge sourceBranch)
+        let logs = T.concat [cloneLog, fetchLog, checkoutLog, mergeLog]
         if isExitFailure mexit
         then do
             cd initDir
-            return MergeFailed
+            return $ Report MergeFailed logs
         else do
-            (texit, _, _) <- verboseStack test
+            (texit, stackLog) <- mergeOutput' <$> verboseStack test
             cd initDir
+            let logs' = logs <> stackLog
             if isExitFailure texit
-            then return TestFailed
-            else return TestSucceeded
+            then return $ Report TestFailed    logs'
+            else return $ Report TestSucceeded logs'

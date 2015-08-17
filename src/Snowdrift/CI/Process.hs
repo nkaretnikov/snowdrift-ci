@@ -9,10 +9,12 @@ module Snowdrift.CI.Process
     , verboseReadProcessWithExitCode
     ) where
 
-import           Prelude hiding (unwords, putStrLn)
+import           Prelude hiding (unwords, putStr, putStrLn)
 
+import           Control.Lens
 import           Data.Monoid
 import           Data.Text
+import           Data.Text.IO
 import           System.Exit
 import qualified System.Process as P
 
@@ -30,11 +32,12 @@ readProcessWithExitCode proc args = do
 
 verboseReadProcessWithExitCode :: Text -> [Text] -> IO (ExitCode, Stdout, Stderr)
 verboseReadProcessWithExitCode proc args = do
-    putStrLn $ proc <> " " <> unwords args
+    let cmd = proc <> " " <> unwords args <> "\n"
+    putStr cmd
     res@(_, out, err) <- readProcessWithExitCode proc args
     printStdout out
     printStderr err
-    return res
+    return $ over _2 (Stdout . (cmd <>) . unStdout) res
 
 isExitFailure :: ExitCode -> Bool
 isExitFailure (ExitFailure _) = True

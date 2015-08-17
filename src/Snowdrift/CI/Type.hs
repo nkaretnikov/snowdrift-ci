@@ -40,3 +40,8 @@ data Status = MergeFailed
             | TestFailed
             | TestSucceeded
             deriving (Eq, Show)
+
+data Report = Report
+    { reportStatus :: Status
+    , reportLog    :: Text
+    } deriving (Eq, Show)

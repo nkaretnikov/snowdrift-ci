@@ -17,6 +17,7 @@ library
   build-depends:       base >=4.8 && <4.9
                      , aeson
                      , directory
+                     , lens
                      , process
                      , temporary
                      , text
@@ -66,6 +67,7 @@ test-suite test
                      , lens
                      , process
                      , scotty
+                     , split
                      , tasty
                      , tasty-hunit
                      , text

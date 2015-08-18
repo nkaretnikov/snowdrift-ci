@@ -7,4 +7,4 @@ import Snowdrift.CI.Printer as Snowdrift.CI
 import Snowdrift.CI.Process as Snowdrift.CI
 import Snowdrift.CI.Stack as Snowdrift.CI
 import Snowdrift.CI.Type as Snowdrift.CI
-import Snowdrift.CI.Type.Internal ()
+import Snowdrift.CI.Type.Internal as Snowdrift.CI

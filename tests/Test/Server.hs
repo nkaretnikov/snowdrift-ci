@@ -27,6 +27,8 @@ import           Test.Tasty.HUnit
 import           Web.Scotty hiding (body, file)
 import qualified Web.Scotty as S
 
+import           Snowdrift.CI (toMarkdown)
+
 tests :: TestTree
 tests = testGroup "Server tests"
     [ mergeRequestOpened
@@ -62,7 +64,7 @@ mergeRequestOpened = testCase "merge request opened" $ do
                 withHeader "Content-Type" contentType
                 withHeader "PRIVATE-TOKEN" $ T.pack token
                 body <- S.body
-                let result' = "{\"note\":\"" <> unlines result <> testSucceeded <> "\"}"
+                let result' = "{\"note\":\"" <> toMarkdown (unlines result <> testSucceeded) <> "\"}"
                     -- This is just a hacky way to make '\n' and '\\n' match.
                     body'   = map chr <$> intercalate [10] $ splitOn [92,110] $ map ord $ LC.unpack body
                 liftIO $ body' @?= result'

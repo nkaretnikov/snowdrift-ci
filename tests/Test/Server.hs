@@ -60,7 +60,7 @@ mergeRequestOpened = testCase "merge request opened" $ do
         let contentType   = "application/json; charset=utf-8"
             testSucceeded = "test succeeded"
         void $ forkIO $ scottyOpts (Options 0 $ setPort port' defaultSettings) $
-            S.post "" $ do
+            S.post "/api/v3/projects/71/merge_request/115/comments" $ do
                 withHeader "Content-Type" contentType
                 withHeader "PRIVATE-TOKEN" $ T.pack token
                 body <- S.body

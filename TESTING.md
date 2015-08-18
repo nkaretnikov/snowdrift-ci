@@ -18,7 +18,7 @@ List all merge requests of the snowdrift-ci-test project:
 
 Run snowdrift-ci and make it send reports to git.gnu.io:
 ```
-% stack exec snowdrift-ci 8086 https://git.gnu.io/api/v3/projects/71/merge_request/115/comments <TOKEN> &
+% stack exec snowdrift-ci 8086 https://git.gnu.io <TOKEN> &
 ```
 
 Feed a dummy merge request hook output to snowdrift-ci, making it clone

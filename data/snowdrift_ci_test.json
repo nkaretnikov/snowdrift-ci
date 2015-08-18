@@ -6,7 +6,7 @@
     "avatar_url": ""
   },
   "object_attributes": {
-    "id": 0,
+    "id": 115,
     "target_branch": "master",
     "source_branch": "readme",
     "source_project_id": 0,
@@ -20,7 +20,7 @@
     "milestone_id": null,
     "state": "opened",
     "merge_status": "",
-    "target_project_id": 0,
+    "target_project_id": 71,
     "iid": 0,
     "description": "",
     "source": {

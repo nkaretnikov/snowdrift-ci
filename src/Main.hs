@@ -43,12 +43,22 @@ postWith :: Wreq.Options -> Url -> ByteString -> IO (Response ByteString)
 postWith opts url text =
     Wreq.postWith opts (T.unpack $ unUrl url) text
 
+mkCommentUrl :: Url -> TargetId -> MergeRequestId -> Url
+mkCommentUrl (Url u) (TargetId t) (MergeRequestId m) =
+    Url $ T.concat
+        [ u
+        , "/api/v3/projects/"
+        , T.pack $ show t
+        , "/merge_request/"
+        , T.pack $ show m
+        , "/comments" ]
+
 handle :: Port -> Url -> Token -> IO ()
 handle port url token =
     scottyOpts (S.Options 0 $ setPort port defaultSettings) $
         post "" $ do
             bs <- body
-            F.forM_ (decode bs :: Maybe MergeRequest) $ \mr ->
+            F.forM_ (decode bs) $ \mr@MergeRequest {..} ->
                 liftIO $ do
                     report@Report {..} <- testMergeRequest mr
                     printStatus reportStatus
@@ -59,5 +69,8 @@ handle port url token =
                             .~ ["application/json; charset=utf-8"]
                              & header "PRIVATE-TOKEN"
                             .~ [encodeUtf8 $ unToken token]
-                    res <- postWith opts url $ encode report
+                    res <- postWith
+                               opts
+                               (mkCommentUrl url targetId mergeRequestId)
+                               (encode report)
                     print $ res ^. responseStatus . statusCode

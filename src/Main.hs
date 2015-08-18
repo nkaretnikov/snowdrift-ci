@@ -24,7 +24,7 @@ import           Snowdrift.CI
 
 main :: IO ()
 main = do
-    let usage = error "Usage: PORT"
+    let usage = error "Usage: PORT URL TOKEN"
     getArgs >>= \case
         [port, url, token]
             -> if all isNumber port

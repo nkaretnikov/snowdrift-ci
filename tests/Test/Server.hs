@@ -4,6 +4,7 @@
 module Test.Server where
 
 import           Control.Concurrent
+import           Control.Exception
 import           Control.Lens
 import           Control.Monad
 import           Control.Monad.IO.Class
@@ -49,33 +50,33 @@ mergeRequestOpened = testCase "merge request opened" $ do
                              , show port
                              , "http://localhost:" <> show port'
                              , token ]
-    (_, Just oh, _, ph) <- createProcess $ stack
-                               { create_group = True
-                               , std_out = CreatePipe
-                               }
+        create = createProcess stack
+                     { create_group = True
+                     , std_out = CreatePipe }
+        interrupt = traverseOf _4 interruptProcessGroupOf
+    bracket create interrupt $ \(_, Just oh, _, ph) -> do
+        let contentType   = "application/json; charset=utf-8"
+            testSucceeded = "test succeeded"
+        void $ forkIO $ scottyOpts (Options 0 $ setPort port' defaultSettings) $
+            S.post "" $ do
+                withHeader "Content-Type" contentType
+                withHeader "PRIVATE-TOKEN" $ T.pack token
+                body <- S.body
+                let result' = "{\"note\":\"" <> unlines result <> testSucceeded <> "\"}"
+                    -- This is just a hacky way to make '\n' and '\\n' match.
+                    body'   = map chr <$> intercalate [10] $ splitOn [92,110] $ map ord $ LC.unpack body
+                liftIO $ body' @?= result'
 
-    let contentType   = "application/json; charset=utf-8"
-        testSucceeded = "test succeeded"
-    void $ forkIO $ scottyOpts (Options 0 $ setPort port' defaultSettings) $
-        S.post "" $ do
-            withHeader "Content-Type" contentType
-            withHeader "PRIVATE-TOKEN" $ T.pack token
-            body <- S.body
-            let result' = "{\"note\":\"" <> unlines result <> testSucceeded <> "\"}"
-                -- This is just a hacky way to make '\n' and '\\n' match.
-                body'   = map chr <$> intercalate [10] $ splitOn [92,110] $ map ord $ LC.unpack body
-            liftIO $ body' @?= result'
+        str <- C.readFile file
+        threadDelay 2000000
+        let opts = defaults
+                & W.header "Content-Type"
+                .~ [encodeUtf8 $ T.toStrict contentType]
+        void $ postWith opts ("http://localhost:" <> show port) str
 
-    str <- C.readFile file
-    threadDelay 2000000
-    let opts = defaults
-             & W.header "Content-Type"
-            .~ [encodeUtf8 $ T.toStrict contentType]
-    void $ postWith opts ("http://localhost:" <> show port) str
-
-    output <- hGetContents oh
-    interruptProcessGroupOf ph
-    output @?= unlines (result <> [testSucceeded, "200"])
+        output <- hGetContents oh
+        interruptProcessGroupOf ph
+        output @?= unlines (result <> [testSucceeded, "200"])
   where
     result =
       [ "git clone git@github.com:nkaretnikov/snowdrift-ci-test.git target"

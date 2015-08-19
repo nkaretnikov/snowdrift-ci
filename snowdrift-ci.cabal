@@ -14,7 +14,7 @@ data-dir:            data
 
 
 library
-  build-depends:       base >=4.8 && <4.9
+  build-depends:       base
                      , aeson
                      , directory
                      , lens
@@ -36,7 +36,7 @@ library
 
 executable snowdrift-ci
   main-is:             Main.hs
-  build-depends:       base >=4.8 && <4.9
+  build-depends:       base
                      , aeson
                      , bytestring
                      , directory

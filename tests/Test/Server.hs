@@ -3,6 +3,7 @@
 
 module Test.Server where
 
+import           Control.Applicative
 import           Control.Concurrent
 import           Control.Exception
 import           Control.Lens
@@ -90,8 +91,7 @@ mergeRequestOpened = testCase "merge request opened" $ do
       , "Your branch is up-to-date with 'origin/master'."
       , "Already on 'master'"
       , "git merge readme"
-      , "Updating a0c3d8f..0df2127"
-      , "Fast-forward"
+      , "Merge made by the 'recursive' strategy."
       , " README.md | 1 +"
       , " 1 file changed, 1 insertion(+)"
       , " create mode 100644 README.md"
@@ -104,8 +104,9 @@ mergeRequestOpened = testCase "merge request opened" $ do
       , "other ones in the 'other-languages' field."
       , "snowdrift-ci-test-0.1.0.0: build (test)"
       , "Preprocessing test suite 'test' for snowdrift-ci-test-0.1.0.0..."
-      , "[1 of 1] Compiling Main             ( tests/Test.hs, .stack-work/dist/x86_64-linux/Cabal-1.22.2.0/build/test/test-tmp/Main.o )"
-      , "Linking .stack-work/dist/x86_64-linux/Cabal-1.22.2.0/build/test/test ..."
+      , "[1 of 1] Compiling Main             ( tests/Test.hs, .stack-work/dist/x86_64-linux/Cabal-1.18.1.5/build/test/test-tmp/Main.o )"
+      , "Linking .stack-work/dist/x86_64-linux/Cabal-1.18.1.5/build/test/test ..."
+
       , "snowdrift-ci-test-0.1.0.0: test (suite: test)"
       , "stdout"
       , "stderr"

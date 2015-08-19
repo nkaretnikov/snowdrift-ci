@@ -11,6 +11,7 @@ module Snowdrift.CI.Process
 
 import           Prelude hiding (unwords, putStr, putStrLn)
 
+import           Control.Applicative
 import           Control.Lens
 import           Data.Monoid
 import           Data.Text

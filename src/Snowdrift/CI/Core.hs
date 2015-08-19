@@ -5,6 +5,7 @@ module Snowdrift.CI.Core where
 
 import           Prelude hiding (FilePath)
 
+import           Control.Applicative
 import           Data.Monoid
 import qualified Data.Text as T
 import           System.Directory

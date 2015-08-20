@@ -19,6 +19,7 @@ import           Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
 import           System.Exit
+import           System.IO
 import qualified System.Process as P
 
 import           Snowdrift.CI.Printer
@@ -36,10 +37,10 @@ readProcessWithExitCode Command {..} = do
 verboseReadProcessWithExitCode :: Command -> IO (ExitCode, Stdout, Stderr)
 verboseReadProcessWithExitCode command@Command {..} = do
     let cmd = commandExec <> " " <> T.unwords commandArgs <> "\n"
-    T.putStr cmd
+    T.putStr cmd >> hFlush stdout
     res@(_, out, err) <- readProcessWithExitCode command
-    printStdout out
-    printStderr err
+    printStdout out >> hFlush stdout
+    printStderr err >> hFlush stderr
     return $ over _2 (Stdout . (cmd <>) . unStdout) res
 
 isExitFailure :: ExitCode -> Bool

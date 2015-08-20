@@ -1,0 +1,6 @@
+stack --extra-lib-dirs /home/nikita/.nix-profile/lib --extra-include-dirs /home/nikita/.nix-profile/include clean
+stack --extra-lib-dirs /home/nikita/.nix-profile/lib --extra-include-dirs /home/nikita/.nix-profile/include build
+stack --extra-lib-dirs /home/nikita/.nix-profile/lib --extra-include-dirs /home/nikita/.nix-profile/include install
+stack --extra-lib-dirs /home/nikita/.nix-profile/lib --extra-include-dirs /home/nikita/.nix-profile/include exec sdm clean
+stack --extra-lib-dirs /home/nikita/.nix-profile/lib --extra-include-dirs /home/nikita/.nix-profile/include exec sdm init
+stack --extra-lib-dirs /home/nikita/.nix-profile/lib --extra-include-dirs /home/nikita/.nix-profile/include test

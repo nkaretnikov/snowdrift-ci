@@ -1,0 +1,6 @@
+stack clean
+stack build
+stack install
+stack exec sdm clean
+stack exec sdm init
+stack test

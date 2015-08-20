@@ -52,7 +52,8 @@ mergeRequestOpened = testCase "merge request opened" $ do
         stack = proc "stack" [ "exec", "snowdrift-ci"
                              , show port
                              , "http://localhost:" <> show port'
-                             , token ]
+                             , token
+                             , "data/snowdrift_ci_test.commands" ]
         create = createProcess stack
                      { create_group = True
                      , std_out = CreatePipe }

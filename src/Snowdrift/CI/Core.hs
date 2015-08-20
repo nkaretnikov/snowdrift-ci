@@ -7,12 +7,13 @@ import           Prelude hiding (FilePath)
 
 import           Control.Applicative
 import           Data.Monoid
+import           Data.Text (Text)
 import qualified Data.Text as T
 import           System.Directory
 import           System.IO.Temp
 
 import           Snowdrift.CI.Git
-import           Snowdrift.CI.Stack
+import           Snowdrift.CI.Parser
 import           Snowdrift.CI.Process
 import           Snowdrift.CI.Type
 
@@ -22,8 +23,8 @@ x </> y = FilePath $ (unFilePath x) <> "/" <> (unFilePath y)
 cd :: FilePath -> IO ()
 cd = setCurrentDirectory . T.unpack . unFilePath
 
-testMergeRequest :: MergeRequest -> IO Report
-testMergeRequest MergeRequest {..} = do
+testMergeRequest :: MergeRequest -> Text -> IO Report
+testMergeRequest MergeRequest {..} testActions = do
     initDir <- FilePath . T.pack <$> getCurrentDirectory
     withSystemTempDirectory "snowdrift-ci" $ \tmp -> do
         let tmpDir    = FilePath $ T.pack tmp
@@ -42,9 +43,12 @@ testMergeRequest MergeRequest {..} = do
             cd initDir
             return $ Report MergeFailed logs
         else do
-            (texit, stackLog) <- mergeOutput' <$> verboseStack test
+            (texits, testLog) <-
+                foldActions $
+                    verboseReadProcessWithExitCode <$>
+                        parseCommands testActions
             cd initDir
-            let logs' = logs <> stackLog
-            if isExitFailure texit
+            let logs' = logs <> testLog
+            if isExitFailure `any` texits
             then return $ Report TestFailed    logs'
             else return $ Report TestSucceeded logs'

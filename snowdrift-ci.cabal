@@ -30,7 +30,6 @@ library
                      , Snowdrift.CI.Parser
                      , Snowdrift.CI.Printer
                      , Snowdrift.CI.Process
-                     , Snowdrift.CI.Stack
                      , Snowdrift.CI.Type
                      , Snowdrift.CI.Type.Internal
 

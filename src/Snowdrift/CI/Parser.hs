@@ -3,13 +3,14 @@
 
 module Snowdrift.CI.Parser where
 
+import           Control.Applicative
+import           Control.Monad
 import           Data.Aeson
 import           Data.Maybe
 import           Data.Text (Text)
 import qualified Data.Text as T
-import           Control.Monad
 
-import           Snowdrift.CI.Type (MergeRequest (MergeRequest))
+import           Snowdrift.CI.Type (Command (..), MergeRequest (MergeRequest))
 import qualified Snowdrift.CI.Type as CI
 
 stripPrefix :: Text -> Text -> Text
@@ -54,3 +55,11 @@ instance FromJSON MergeRequest where
                  }
         else mzero
     parseJSON _ = mzero
+
+parseCommands :: Text -> [Command]
+parseCommands t = catMaybes cs
+  where
+    ts = T.lines t
+    cs = (parse . T.words) <$> ts
+    parse []     = Nothing
+    parse (w:ws) = Just $ Command w ws

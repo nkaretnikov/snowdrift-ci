@@ -4,13 +4,17 @@
 
 module Main where
 
+import           Prelude hiding (readFile, FilePath)
+
 import           Control.Lens
 import           Control.Monad.IO.Class
 import           Data.Aeson
 import           Data.ByteString.Lazy (ByteString)
 import           Data.Char
 import qualified Data.Foldable as F
+import           Data.Text (Text)
 import qualified Data.Text as T
+import qualified Data.Text.IO as T
 import           Data.Text.Encoding (encodeUtf8)
 import           Network.Wai.Handler.Warp (Settings, defaultSettings)
 import qualified Network.Wai.Handler.Warp as Warp
@@ -24,14 +28,15 @@ import           Snowdrift.CI
 
 main :: IO ()
 main = do
-    let usage = error "Usage: PORT URL TOKEN"
+    let usage = error "Usage: PORT URL TOKEN FILE"
     getArgs >>= \case
-        [port, url, token]
+        [port, url, token, file]
             -> if all isNumber port
                then handle
                         (Port $ read port)
                         (Url $ T.pack url)
                         (Token $ T.pack token)
+                        (FilePath $ T.pack file)
                else usage
         _   -> usage
 
@@ -53,14 +58,18 @@ mkCommentUrl (Url u) (TargetId t) (MergeRequestId m) =
         , T.pack $ show m
         , "/comments" ]
 
-handle :: Port -> Url -> Token -> IO ()
-handle port url token =
+readFile :: FilePath -> IO Text
+readFile = T.readFile . T.unpack . unFilePath
+
+handle :: Port -> Url -> Token -> FilePath -> IO ()
+handle port url token file =
     scottyOpts (S.Options 0 $ setPort port defaultSettings) $
         post "" $ do
             bs <- body
             F.forM_ (decode bs) $ \mr@MergeRequest {..} ->
                 liftIO $ do
-                    report@Report {..} <- testMergeRequest mr
+                    commands <- readFile file
+                    report@Report {..} <- testMergeRequest mr commands
                     printStatus reportStatus
                     -- http://doc.gitlab.com/ce/api/
                     -- http://doc.gitlab.com/ce/api/merge_requests.html#post-comment-to-mr

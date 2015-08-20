@@ -12,13 +12,13 @@ import Snowdrift.CI.Process
 import Snowdrift.CI.Type
 
 git :: [Text] -> IO (ExitCode, Stdout, Stderr)
-git = readProcessWithExitCode "git"
+git = readProcessWithExitCode . Command "git"
 
 git_ :: [Text] -> IO ()
 git_ = void . git
 
 verboseGit :: [Text] -> IO (ExitCode, Stdout, Stderr)
-verboseGit = verboseReadProcessWithExitCode "git"
+verboseGit = verboseReadProcessWithExitCode . Command "git"
 
 verboseGit_ :: [Text] -> IO ()
 verboseGit_ = void . verboseGit

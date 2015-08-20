@@ -45,3 +45,8 @@ data Report = Report
     { reportStatus :: Status
     , reportLog    :: Text
     } deriving (Eq, Show)
+
+data Command = Command
+    { commandExec :: Text
+    , commandArgs :: [Text]
+    } deriving (Eq, Show)
